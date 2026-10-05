@@ -48,6 +48,22 @@ export function Philosophy() {
             analysis so analysts can spend more time understanding the game.
           </p>
         </Reveal>
+
+        <Reveal delay={0.24}>
+          <p className="mx-auto mt-9 flex flex-wrap items-center justify-center gap-x-4 gap-y-2 font-mono text-[11px] uppercase tracking-[0.24em] text-primary">
+            <span>Easy to use</span>
+            <span
+              className="size-1 rounded-full bg-primary/50"
+              aria-hidden="true"
+            />
+            <span>Affordable</span>
+            <span
+              className="size-1 rounded-full bg-primary/50"
+              aria-hidden="true"
+            />
+            <span>Built by an analyst</span>
+          </p>
+        </Reveal>
       </Container>
     </section>
   );

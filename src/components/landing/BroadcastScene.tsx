@@ -1,18 +1,31 @@
-const LIME = "#c9f73c";
-const PITCH_LINE = "rgba(255,255,255,0.5)";
+const CYAN = "#2ee6f6";
+const PITCH_LINE = "rgba(255,255,255,0.55)";
 
 /** Even vertical mow bands, the way a side camera sees a pitch. */
 const BANDS = Array.from({ length: 19 }, (_, i) => i * 89);
+
+/** Deterministic crowd speckle for the stand beyond the far touchline. */
+const CROWD = Array.from({ length: 340 }, (_, i) => ({
+  x: (i * 173) % 1600,
+  y: 5 + ((i * 97) % 114),
+  r: 2 + ((i * 31) % 3),
+  fill: ["#584d68", "#8a7f9c", "#3c3a49", "#9a8f7a", "#6b7f8a"][i % 5],
+}));
+
+/** LED advertising boards along the far touchline. */
+const LEDS = Array.from({ length: 20 }, (_, i) => i * 84 + 8);
 
 /** Figures further up the frame (deeper) are drawn smaller. */
 const depth = (y: number) =>
   Math.min(1.18, Math.max(0.55, 0.6 + ((y - 170) / 714) * 0.58));
 
-type FigureProps = { x: number; y: number; light: boolean };
+type Kit = "light" | "dark";
 
-/** Stylised match figure: shadow, legs, shirt, head. */
-function Figure({ x, y, light }: FigureProps) {
+/** Stylised match figure: shadow, shorts, shirt, head. */
+function Figure({ x, y, kit }: { x: number; y: number; kit: Kit }) {
   const s = depth(y);
+  const shirt = kit === "light" ? "#8fc3ea" : "#7d1f3f";
+  const shorts = kit === "light" ? "#16294a" : "#1d3f8f";
   return (
     <g>
       <ellipse
@@ -20,7 +33,7 @@ function Figure({ x, y, light }: FigureProps) {
         cy={y + 3 * s}
         rx={15 * s}
         ry={4.5 * s}
-        fill="rgba(0,0,0,0.45)"
+        fill="rgba(0,0,0,0.4)"
       />
       <rect
         x={x - 6 * s}
@@ -28,7 +41,7 @@ function Figure({ x, y, light }: FigureProps) {
         width={12 * s}
         height={13 * s}
         rx={3 * s}
-        fill="#14160f"
+        fill={shorts}
       />
       <rect
         x={x - 8 * s}
@@ -36,10 +49,8 @@ function Figure({ x, y, light }: FigureProps) {
         width={16 * s}
         height={20 * s}
         rx={5 * s}
-        fill={light ? "#f1f3ec" : "#2b3033"}
-        stroke={
-          light ? "rgba(0,0,0,0.25)" : "rgba(255,255,255,0.6)"
-        }
+        fill={shirt}
+        stroke="rgba(0,0,0,0.28)"
         strokeWidth={1.3}
       />
       <circle cx={x} cy={y - 37 * s} r={5.4 * s} fill="#a8846a" />
@@ -47,66 +58,31 @@ function Figure({ x, y, light }: FigureProps) {
   );
 }
 
-/** Mono annotation chip drawn on the footage. */
-function Chip({
-  x,
-  y,
-  w,
-  text,
-}: {
-  x: number;
-  y: number;
-  w: number;
-  text: string;
-}) {
-  return (
-    <g transform={`translate(${x}, ${y})`}>
-      <rect
-        width={w}
-        height={40}
-        rx={7}
-        fill="rgba(8,10,8,0.88)"
-        stroke="rgba(201,247,60,0.45)"
-      />
-      <circle cx={15} cy={20} r={3.5} fill={LIME} />
-      <text
-        x={28}
-        y={26}
-        fontFamily="'JetBrains Mono', monospace"
-        fontSize={19}
-        letterSpacing="1.4"
-        fill={LIME}
-      >
-        {text}
-      </text>
-    </g>
-  );
-}
-
-const ATTACKERS: [number, number][] = [
-  [560, 560],
-  [700, 445],
-  [1085, 505],
-  [820, 690],
-  [470, 700],
-  [905, 330],
+const LIGHT: [number, number][] = [
+  [540, 775],
+  [648, 628],
+  [470, 668],
+  [836, 604],
+  [905, 468],
+  [1042, 418],
 ];
 
-const DEFENDERS: [number, number][] = [
-  [1000, 320],
-  [985, 460],
-  [1005, 600],
-  [992, 735],
-  [855, 558],
-  [742, 300],
+const DARK: [number, number][] = [
+  [886, 566],
+  [972, 486],
+  [1074, 618],
+  [775, 424],
+  [1158, 528],
+  [1004, 712],
 ];
 
 /**
- * Broadcast-style match frame: grass, pitch markings, two teams and a set of
- * lime tactical overlays (pressing ring, line-breaking pass, run path, target
- * zone, defensive line). Rendered as pure SVG so it stays razor sharp.
+ * The match frame that lives inside the app window: daylight pitch with a
+ * crowd and LED boards, two teams, and the cyan telestration the analyst has
+ * drawn — a filled zone, a control line with handles and a curved aerial
+ * arrow. Pure SVG so it stays razor sharp at any size.
  */
-export function BroadcastScene() {
+export function BroadcastScene({ dashed = false }: { dashed?: boolean }) {
   return (
     <svg
       viewBox="0 0 1600 900"
@@ -116,20 +92,16 @@ export function BroadcastScene() {
     >
       <defs>
         <linearGradient id="tc-grass" x1="0" y1="0" x2="0" y2="1">
-          <stop offset="0%" stopColor="#0f2416" />
-          <stop offset="55%" stopColor="#16351f" />
-          <stop offset="100%" stopColor="#1c4025" />
-        </linearGradient>
-        <linearGradient id="tc-stand" x1="0" y1="0" x2="0" y2="1">
-          <stop offset="0%" stopColor="#070d0a" />
-          <stop offset="100%" stopColor="#0e2118" />
+          <stop offset="0%" stopColor="#3c7c31" />
+          <stop offset="55%" stopColor="#4c9140" />
+          <stop offset="100%" stopColor="#559c47" />
         </linearGradient>
         <radialGradient id="tc-vig" cx="50%" cy="46%" r="76%">
           <stop offset="55%" stopColor="#000000" stopOpacity="0" />
-          <stop offset="100%" stopColor="#000000" stopOpacity="0.55" />
+          <stop offset="100%" stopColor="#000000" stopOpacity="0.5" />
         </radialGradient>
         <marker
-          id="tc-head"
+          id="tc-head-cyan"
           viewBox="0 0 26 26"
           refX="23"
           refY="13"
@@ -138,12 +110,31 @@ export function BroadcastScene() {
           markerUnits="userSpaceOnUse"
           orient="auto"
         >
-          <path d="M3 3 L24 13 L3 23 Z" fill={LIME} />
+          <path d="M3 3 L24 13 L3 23 Z" fill={CYAN} />
         </marker>
       </defs>
 
-      {/* Out-of-focus stand beyond the far touchline */}
-      <rect x="0" y="0" width="1600" height="172" fill="url(#tc-stand)" />
+      {/* Stand beyond the far touchline */}
+      <rect x="0" y="0" width="1600" height="126" fill="#191420" />
+      {CROWD.map((c, i) => (
+        <circle key={i} cx={c.x} cy={c.y} r={c.r} fill={c.fill} />
+      ))}
+
+      {/* LED advertising boards */}
+      <rect x="0" y="126" width="1600" height="46" fill="#6544e8" />
+      <rect x="0" y="126" width="1600" height="3" fill="rgba(0,0,0,0.35)" />
+      <rect x="0" y="169" width="1600" height="3" fill="rgba(0,0,0,0.35)" />
+      {LEDS.map((x) => (
+        <rect
+          key={x}
+          x={x}
+          y={136}
+          width={54}
+          height={26}
+          rx={3}
+          fill="rgba(255,255,255,0.78)"
+        />
+      ))}
 
       {/* Grass + mow bands */}
       <rect x="0" y="172" width="1600" height="728" fill="url(#tc-grass)" />
@@ -155,101 +146,68 @@ export function BroadcastScene() {
           width={89}
           height={728}
           fill={
-            i % 2 === 0 ? "rgba(255,255,255,0.05)" : "rgba(0,0,0,0.08)"
+            i % 2 === 0 ? "rgba(255,255,255,0.055)" : "rgba(0,0,0,0.075)"
           }
         />
       ))}
 
-      {/* Pitch markings */}
+      {/* Pitch markings — far touchline, goal line, penalty area */}
       <g stroke={PITCH_LINE} strokeWidth="5" fill="none">
-        <line x1="0" y1="172" x2="1600" y2="172" />
-        <line x1="0" y1="884" x2="1600" y2="884" />
-        <line x1="770" y1="172" x2="770" y2="884" />
-        <ellipse cx="770" cy="528" rx="204" ry="92" />
+        <line x1="0" y1="176" x2="1600" y2="176" />
+        <line x1="1556" y1="176" x2="1556" y2="900" />
+        <line x1="1150" y1="466" x2="1556" y2="466" />
+        <line x1="1150" y1="466" x2="1150" y2="778" />
+        <line x1="1150" y1="778" x2="1556" y2="778" />
+        <line x1="1392" y1="560" x2="1392" y2="684" />
+        <line x1="1392" y1="560" x2="1556" y2="560" />
+        <line x1="1392" y1="684" x2="1556" y2="684" />
       </g>
-      <circle cx="770" cy="528" r="6" fill="rgba(255,255,255,0.65)" />
+      <circle cx="1268" cy="622" r="6" fill="rgba(255,255,255,0.7)" />
 
-      {/* Target zone behind the defensive line */}
+      {/* ---- Telestration: filled zone with a control line + handles ---- */}
       <polygon
-        points="1062,372 1452,392 1440,652 1054,632"
-        fill="rgba(201,247,60,0.07)"
-        stroke="rgba(201,247,60,0.35)"
-        strokeWidth="2.5"
-        strokeDasharray="14 10"
+        points="500,625 715,478 808,575 592,740"
+        fill="rgba(46,230,246,0.42)"
+        stroke={CYAN}
+        strokeWidth="7"
+        strokeLinejoin="round"
       />
-      <Chip x={1076} y={402} w={158} text="ZONE 14" />
-
-      {/* Defensive line */}
       <line
-        x1="1008"
-        y1="282"
-        x2="992"
-        y2="778"
-        stroke={LIME}
-        strokeOpacity="0.65"
-        strokeWidth="3"
-        strokeDasharray="16 12"
+        x1="715"
+        y1="478"
+        x2="556"
+        y2="398"
+        stroke="#ffffff"
+        strokeWidth="5"
+        strokeLinecap="round"
       />
-      <Chip x={1014} y={786} w={244} text="DEFENSIVE LINE" />
+      <circle cx="715" cy="478" r="9" fill="#ffffff" stroke={CYAN} strokeWidth="4" />
+      <circle cx="556" cy="398" r="9" fill="#ffffff" stroke={CYAN} strokeWidth="4" />
 
       {/* Players */}
-      {DEFENDERS.map(([x, y]) => (
-        <Figure key={`d-${x}-${y}`} x={x} y={y} light={false} />
+      {DARK.map(([x, y]) => (
+        <Figure key={`d-${x}-${y}`} x={x} y={y} kit="dark" />
       ))}
-      {ATTACKERS.map(([x, y]) => (
-        <Figure key={`a-${x}-${y}`} x={x} y={y} light />
+      {LIGHT.map(([x, y]) => (
+        <Figure key={`a-${x}-${y}`} x={x} y={y} kit="light" />
       ))}
 
       {/* Ball */}
-      <ellipse cx={648} cy={574} rx={8} ry={3} fill="rgba(0,0,0,0.45)" />
-      <circle cx={648} cy={566} r={9} fill="#f5f7f2" />
+      <ellipse cx="700" cy="556" rx="8" ry="3" fill="rgba(0,0,0,0.4)" />
+      <circle cx="700" cy="548" r="9" fill="#f5f7f2" />
 
-      {/* Line-breaking pass */}
+      {/* Aerial arrow — the drawn tool in the screenshot */}
       <path
-        d="M 662 562 C 796 538, 934 506, 1048 512"
-        stroke={LIME}
-        strokeWidth="5"
+        d="M 715 478 Q 950 235 1195 560"
+        stroke={CYAN}
+        strokeWidth="7"
         strokeLinecap="round"
         fill="none"
-        markerEnd="url(#tc-head)"
+        markerEnd="url(#tc-head-cyan)"
+        {...(dashed
+          ? { strokeDasharray: "16 11", className: "animate-tac-flow" }
+          : {})}
       />
-
-      {/* Run in behind */}
-      <path
-        d="M 840 674 C 934 666, 1044 652, 1138 622"
-        stroke={LIME}
-        strokeOpacity="0.85"
-        strokeWidth="3.5"
-        strokeDasharray="13 7"
-        strokeLinecap="round"
-        fill="none"
-        markerEnd="url(#tc-head)"
-        className="animate-tac-flow"
-      />
-
-      {/* Between-the-lines receiver highlight */}
-      <ellipse
-        cx="700"
-        cy="445"
-        rx="48"
-        ry="31"
-        fill="rgba(201,247,60,0.08)"
-        stroke={LIME}
-        strokeWidth="3"
-        strokeDasharray="12 8"
-        className="animate-tac-flow"
-      />
-      <ellipse
-        cx="700"
-        cy="445"
-        rx="48"
-        ry="31"
-        fill="none"
-        stroke={LIME}
-        strokeWidth="2"
-        className="animate-tac-ping"
-      />
-      <Chip x={608} y={358} w={306} text="8 · BETWEEN LINES" />
 
       {/* Vignette */}
       <rect x="0" y="0" width="1600" height="900" fill="url(#tc-vig)" />
