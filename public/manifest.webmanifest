@@ -1,0 +1,17 @@
+{
+  "name": "Tacstem — Football Video Analysis",
+  "short_name": "Tacstem",
+  "description": "Video analysis, simplified. Code matches, telestrate video and build playlists in one workspace.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#0a0b0a",
+  "theme_color": "#0a0b0a",
+  "icons": [
+    {
+      "src": "/logo.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any"
+    }
+  ]
+}
