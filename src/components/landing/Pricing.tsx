@@ -13,22 +13,23 @@ import {
  * note, feature list or CTA copy. The layout adapts automatically.
  */
 const PLAN = {
-  name: "Pro",
-  price: 3,
+  name: "All-in",
+  price: 10,
+  currency: "€",
   period: "month",
-  billing: "Billed annually",
+  billing: "Per month · Cancel anytime",
   features: [
-    "Match analysis",
-    "Coding",
-    "Telestration",
-    "Playlists",
-    "Projects",
-    "Export tools",
+    "Coding panel + advanced coding pad",
+    "Broadcast-style telestration",
+    "Live tagging without video",
+    "Tactical pad & board animations",
+    "One-click video + CSV export",
+    "Batch analysis across a season",
   ],
   cta: "Start Analyzing",
 };
 
-/** Section 08 — pricing. */
+/** Section 10 — pricing. */
 export function Pricing() {
   return (
     <section id="pricing" className="relative py-24 md:py-32">
@@ -39,7 +40,7 @@ export function Pricing() {
 
       <Container className="relative">
         <Reveal className="flex flex-col items-center text-center">
-          <Eyebrow index="08" className="justify-center">
+          <Eyebrow index="10" className="justify-center">
             Pricing
           </Eyebrow>
           <h2 className={`${sectionTitleCls} text-center`}>
@@ -68,7 +69,7 @@ export function Pricing() {
 
             <div className="mt-6 flex items-baseline gap-1.5">
               <span className="text-2xl font-medium text-muted-foreground">
-                $
+                {PLAN.currency}
               </span>
               <span className="text-6xl font-semibold leading-none tracking-[-0.04em] text-foreground">
                 {PLAN.price}

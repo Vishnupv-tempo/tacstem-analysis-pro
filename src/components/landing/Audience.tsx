@@ -34,13 +34,13 @@ const AUDIENCE = [
   },
 ];
 
-/** Section 06 — who Tacstem is built for. */
+/** Section 08 — who Tacstem is built for. */
 export function Audience() {
   return (
     <section id="audience" className="relative py-24 md:py-32">
       <Container>
         <Reveal>
-          <Eyebrow index="06">Who it’s for</Eyebrow>
+          <Eyebrow index="08">Who it’s for</Eyebrow>
           <h2 className={`${sectionTitleCls} max-w-2xl`}>
             Who is Tacstem for?
           </h2>

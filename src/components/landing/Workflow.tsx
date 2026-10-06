@@ -2,29 +2,34 @@ import {
   Container,
   Eyebrow,
   Reveal,
+  sectionLeadCls,
   sectionTitleCls,
 } from "@/components/landing/primitives";
 
 const STEPS = [
   {
     n: "01",
-    title: "Import",
-    copy: "Bring your match footage into Tacstem.",
+    title: "Load",
+    copy: "No three-hour uploads, no bulky lagging software. Load your match video locally, right in the browser, and start in seconds.",
+    meta: "Local load · No upload",
   },
   {
     n: "02",
-    title: "Code",
-    copy: "Identify and organize important moments.",
+    title: "Tag",
+    copy: "A coding panel of tags and labels, plus an advanced coding pad where analysts design their own tagging system.",
+    meta: "Tags · Coding pad",
   },
   {
     n: "03",
-    title: "Analyze",
-    copy: "Telestrate and add tactical context.",
+    title: "Telestrate",
+    copy: "Freeze any frame and draw over it with broadcast-style visual tools — arrows, zones, markers and highlights.",
+    meta: "Freeze · Broadcast tools",
   },
   {
     n: "04",
-    title: "Review",
-    copy: "Build playlists and communicate your findings.",
+    title: "Export",
+    copy: "Export your telestrated video and the CSV data you tagged in one click.",
+    meta: "Video + CSV · One click",
   },
 ];
 
@@ -36,8 +41,12 @@ export function Workflow() {
         <Reveal>
           <Eyebrow index="05">Workflow</Eyebrow>
           <h2 className={`${sectionTitleCls} max-w-2xl`}>
-            From match footage to tactical insight.
+            Load. Tag. Telestrate. Export.
           </h2>
+          <p className={sectionLeadCls}>
+            Four steps, one browser tab — from raw footage to finished video
+            and data.
+          </p>
         </Reveal>
 
         <ol className="relative mt-16 grid gap-12 md:grid-cols-4 md:gap-6">
@@ -66,8 +75,15 @@ export function Workflow() {
                   <h3 className="mt-4 font-mono text-sm font-medium uppercase tracking-[0.26em] text-foreground">
                     {step.title}
                   </h3>
-                  <p className="mt-3 max-w-[26ch] text-sm leading-6 text-muted-foreground">
+                  <p className="mt-3 max-w-[30ch] text-sm leading-6 text-muted-foreground">
                     {step.copy}
+                  </p>
+                  <p className="mt-3 flex items-center gap-2 font-mono text-[10px] uppercase tracking-[0.16em] text-primary/80">
+                    <span
+                      className="size-1 rounded-full bg-primary/70"
+                      aria-hidden="true"
+                    />
+                    {step.meta}
                   </p>
                 </div>
               </Reveal>

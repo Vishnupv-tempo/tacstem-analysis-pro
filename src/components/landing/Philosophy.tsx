@@ -10,7 +10,7 @@ const GRID_MASK = {
     "radial-gradient(70% 70% at 50% 50%, black 20%, transparent 100%)",
 };
 
-/** Section 07 — product philosophy, deliberately sparse. */
+/** Section 09 — product philosophy, deliberately sparse. */
 export function Philosophy() {
   return (
     <section
@@ -29,7 +29,7 @@ export function Philosophy() {
 
       <Container className="relative text-center">
         <Reveal y={12}>
-          <Eyebrow index="07" className="justify-center">
+          <Eyebrow index="09" className="justify-center">
             Philosophy
           </Eyebrow>
         </Reveal>

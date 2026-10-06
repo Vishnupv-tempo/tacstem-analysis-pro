@@ -39,16 +39,19 @@ export function Hero() {
 
         <Reveal delay={0.06}>
           <h1 className="mt-7 text-[2.25rem] font-semibold leading-[1.04] tracking-[-0.035em] text-foreground sm:text-6xl lg:text-7xl xl:text-[4.75rem]">
-            See the Game.
+            Tactical Analysis
             <br />
-            Analyze the Game<span className="text-primary">.</span>
+            Simplified<span className="text-primary">.</span>
           </h1>
         </Reveal>
 
         <Reveal delay={0.12}>
           <p className="mt-7 max-w-xl text-base leading-7 text-muted-foreground sm:text-lg sm:leading-8">
-            Professional football video analysis tools, simplified for
-            coaches, analysts and scouts.
+            <span className="font-medium text-foreground">
+              Spend less time and money on your workflow.
+            </span>{" "}
+            Professional football video analysis, built for coaches, analysts
+            and scouts.
           </p>
         </Reveal>
 
@@ -78,7 +81,7 @@ export function Hero() {
         <Reveal delay={0.24}>
           <p className="mt-8 flex items-center gap-3 font-mono text-[11px] uppercase tracking-[0.26em] text-muted-foreground">
             <span className="h-px w-8 bg-primary/60" aria-hidden="true" />
-            Video Analysis, Simplified.
+            No install. No upload. Just analysis.
           </p>
         </Reveal>
       </Container>

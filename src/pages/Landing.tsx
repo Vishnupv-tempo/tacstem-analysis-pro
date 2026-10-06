@@ -5,6 +5,8 @@ import { Features } from "@/components/landing/Features";
 import { CodingSection } from "@/components/landing/CodingSection";
 import { TelestrationSection } from "@/components/landing/TelestrationSection";
 import { Workflow } from "@/components/landing/Workflow";
+import { Affordability } from "@/components/landing/Affordability";
+import { Included } from "@/components/landing/Included";
 import { Audience } from "@/components/landing/Audience";
 import { Philosophy } from "@/components/landing/Philosophy";
 import { Pricing } from "@/components/landing/Pricing";
@@ -26,6 +28,8 @@ export default function Landing() {
         <CodingSection />
         <TelestrationSection />
         <Workflow />
+        <Affordability />
+        <Included />
         <Audience />
         <Philosophy />
         <Pricing />
